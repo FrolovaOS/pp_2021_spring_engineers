@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 #include "../../../modules/task_1/frolova_o_radix_sort_batcher_merge/radix_sort_batcher_merge.h"
 
 TEST(getRandomVector, check_size) {
@@ -78,6 +79,15 @@ TEST(radix_sort, bigRadix) {
     std::vector<double> vect = std::vector<double>({3216.0, 6156.0, 145633.0, 6451.0, 71234.0});
     std::vector<double> sorted = radixSort(vect);
     std::vector<double> checked = checkVector(vect);
+    ASSERT_EQ(sorted, checked);
+}
+
+TEST(batcher_merge, simple_merge) {
+    std::vector<double> vect = std::vector<double>({ 2.0, 9.0, 11.0, 7.0, 0.0, 4.0, 12.0, 8.0, 1.0 });
+    std::vector<double> sorted = radix_sort_batcher_omp(vect, 3);
+    std::cout << "main" << std::endl;
+    std::vector<double> checked = checkVector(vect);
+    std::cout << "main2" << std::endl;
     ASSERT_EQ(sorted, checked);
 }
 
