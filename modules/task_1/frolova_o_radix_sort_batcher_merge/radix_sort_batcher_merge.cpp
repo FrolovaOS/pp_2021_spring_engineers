@@ -220,17 +220,13 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
   vec.resize(size, 0);
   int localSize = size / num_threads;
   std::vector<double> localVec(localSize);
-  std::vector<double> res(size);
   int currentPoint, pairPoint;
-#pragma omp parallel num_threads(num_threads) private(localVec, currentPoint, pairPoint) shared(localSize, res)
+#pragma omp parallel num_threads(num_threads) private(localVec, currentPoint, pairPoint) shared(localSize,vec)
   {
     int tid = omp_get_thread_num();
     localVec.assign(vec.begin() + localSize * tid,
                     vec.begin() + localSize * (tid + 1));
     localVec = radixSort(localVec);
-    for (int i = 0; i < localSize; i++) {
-      res[localSize * tid + i] = localVec[i];
-    }
     int countPair = static_cast<int>(comps.size());
     std::vector<double> localVec1(localSize);
     for (int i = 0; i < countPair; i++) {
@@ -240,10 +236,10 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
         currentPoint = localSize * tid;
         pairPoint = localSize * comps[i].second;
         while (step != localSize) {
-          if (res[currentPoint] <= res[pairPoint]) {
-            localVec1[step++] = (res[currentPoint++]);
+          if (vec[currentPoint] <= vec[pairPoint]) {
+            localVec1[step++] = (vec[currentPoint++]);
           } else {
-            localVec1[step++] = (res[pairPoint++]);
+            localVec1[step++] = (vec[pairPoint++]);
           }
         }
       } else if (tid == comps[i].second) {
@@ -251,10 +247,10 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
         pairPoint = localSize * comps[i].first + localSize - 1;
         int step = 0;
         while (step < localSize) {
-          if (res[currentPoint] >= res[pairPoint]) {
-            localVec1[localSize - step - 1] = (res[currentPoint--]);
+          if (vec[currentPoint] >= vec[pairPoint]) {
+            localVec1[localSize - step - 1] = (vec[currentPoint--]);
           } else {
-            localVec1[localSize - step - 1] = res[pairPoint--];
+            localVec1[localSize - step - 1] = vec[pairPoint--];
           }
           step++;
         }
@@ -264,12 +260,12 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
         int j = 0;
         int tmp = localSize * tid + localSize;
         for (int k = localSize * tid; k < tmp; k++) {
-          res[k] = localVec1[j++];
+          vec[k] = localVec1[j++];
         }
       }
     }
 #pragma omp barrier
   }
-  vec.assign(res.begin() + addition, res.end());
+  vec.assign(vec.begin() + addition, vec.end());
   return vec;
 }
