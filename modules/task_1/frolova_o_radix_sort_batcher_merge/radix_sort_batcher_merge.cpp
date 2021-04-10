@@ -265,8 +265,8 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
 #pragma omp barrier
       if ((tid == comps[i].second) || (tid == comps[i].first)) {
         int j = 0;
-        for (int k = localSize * tid; k < localSize * tid + localVec1.size();
-             k++) {
+        int tmp = localSize * tid + localSize;
+        for (int k = localSize * tid; k < tmp; k++) {
           res[k] = localVec1[j++];
         }
       }
