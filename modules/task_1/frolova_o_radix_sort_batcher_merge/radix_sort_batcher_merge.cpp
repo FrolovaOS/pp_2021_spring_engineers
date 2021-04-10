@@ -214,7 +214,6 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
     return radixSort(vec);
   }
   makeNetwork(num_threads);
-  omp_set_num_threads(num_threads);
   int addition = 0;
   while (size % num_threads != 0) {
     addition++;
@@ -225,7 +224,7 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
   std::vector<double> localVec(localSize);
   std::vector<double> res(size);
   int currentPoint, pairPoint;
-#pragma omp parallel private(localVec, currentPoint, pairPoint) shared(localSize, res)
+#pragma omp parallel num_threads(num_threads) private(localVec, currentPoint, pairPoint) shared(localSize, res)
   {
     int tid = omp_get_thread_num();
     localVec.assign(vec.begin() + localSize * tid,
