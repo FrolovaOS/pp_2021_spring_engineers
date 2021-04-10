@@ -1,12 +1,14 @@
 // Copyright 2021 Frolova Olga
 #include "../../../modules/task_1/frolova_o_radix_sort_batcher_merge/radix_sort_batcher_merge.h"
+
 #include <math.h>
 #include <omp.h>
+
 #include <algorithm>
 #include <iostream>
 #include <random>
-#include <vector>
 #include <string>
+#include <vector>
 
 std::vector<std::pair<int, int>> comps;
 
@@ -223,8 +225,7 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
   std::vector<double> localVec(localSize);
   std::vector<double> res(size);
   int currentPoint, pairPoint;
-#pragma omp parallel private(localVec, currentPoint, pairPoint) \
-    shared(localSize, res)
+#pragma omp parallel private(localVec, currentPoint, pairPoint) shared(localSize, res)
   {
     int tid = omp_get_thread_num();
     localVec.assign(vec.begin() + localSize * tid,
