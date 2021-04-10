@@ -8,8 +8,6 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 std::vector<std::pair<int, int>> comps;
 
 std::vector<double> getRandomVector(int size) {
@@ -181,20 +179,16 @@ void oddEvenMerge(std::vector<int> left, std::vector<int> right) {
   for (int i = 0; i < size_left; i++) {
     if (i % 2 != 0) {
       left_even.push_back(left[i]);
-      ;
     } else {
       left_odd.push_back(left[i]);
-      ;
     }
   }
   int size_right = static_cast<int>(right.size());
   for (int i = 0; i < size_right; i++) {
     if (i % 2 != 0) {
       right_even.push_back(right[i]);
-      ;
     } else {
       right_odd.push_back(right[i]);
-      ;
     }
   }
   oddEvenMerge(left_odd, right_odd);
