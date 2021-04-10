@@ -83,11 +83,9 @@ TEST(radix_sort, bigRadix) {
 }
 
 TEST(batcher_merge, simple_merge) {
-    std::vector<double> vect = std::vector<double>({ 2.0, 9.0, 11.0, 7.0, 0.0, 4.0, 12.0, 8.0, 1.0 });
-    std::vector<double> sorted = radix_sort_batcher_omp(vect, 3);
-    std::cout << "main" << std::endl;
+    std::vector<double> vect = std::vector<double>({ 2.0, 9.0, 11.0, 7.0, 13.0, 4.0, 12.0, 8.0, 1.0 , 15.0});
+    std::vector<double> sorted = radix_sort_batcher_omp(vect, 4);
     std::vector<double> checked = checkVector(vect);
-    std::cout << "main2" << std::endl;
     ASSERT_EQ(sorted, checked);
 }
 
