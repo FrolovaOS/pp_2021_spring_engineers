@@ -237,10 +237,13 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
         pairPoint = localSize * comps[i].second;
         while (step != localSize) {
           if (vec[currentPoint] <= vec[pairPoint]) {
-            localVec1[step++] = (vec[currentPoint++]);
+            localVec1[step] = (vec[currentPoint]);
+            currentPoint++;
           } else {
-            localVec1[step++] = (vec[pairPoint++]);
+            localVec1[step] = (vec[pairPoint]);
+            pairPoint++;
           }
+          step++;
         }
       } else if (tid == comps[i].second) {
         currentPoint = localSize * tid + localSize - 1;
@@ -248,9 +251,11 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
         int step = 0;
         while (step < localSize) {
           if (vec[currentPoint] >= vec[pairPoint]) {
-            localVec1[localSize - step - 1] = (vec[currentPoint--]);
+            localVec1[localSize - step - 1] = (vec[currentPoint]);
+            currentPoint--;
           } else {
-            localVec1[localSize - step - 1] = vec[pairPoint--];
+            localVec1[localSize - step - 1] = vec[pairPoint];
+            pairPoint--;
           }
           step++;
         }
@@ -260,7 +265,8 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
         int j = 0;
         int tmp = localSize * tid + localSize;
         for (int k = localSize * tid; k < tmp; k++) {
-          vec[k] = localVec1[j++];
+          vec[k] = localVec1[j];
+          j++;
         }
       }
     }
