@@ -1,13 +1,17 @@
 // Copyright 2021 Frolova Olga
 #include "../../../modules/task_2/frolova_o_radix_sort_batcher_merge_omp/radix_sort_batcher_merge.h"
+
 #include <math.h>
 #include <omp.h>
+
 #include <algorithm>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
+#include <limits>
 
+int const MAX = INT_MAX;
 std::vector<std::pair<int, int>> comps;
 
 std::vector<double> getRandomVector(int size) {
@@ -213,20 +217,25 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
   }
   makeNetwork(num_threads);
   int addition = 0;
-  while (size % num_threads != 0) {
+  while (vec.size() % num_threads != 0) {
+    vec.push_back(MAX);
     addition++;
-    size++;
   }
-  vec.resize(size, 0);
-  int localSize = size / num_threads;
+  int localSize = vec.size() / num_threads;
   std::vector<double> localVec(localSize);
   int currentPoint, pairPoint;
-#pragma omp parallel num_threads(num_threads) private(localVec, currentPoint, pairPoint) shared(localSize, vec)
+#pragma omp parallel num_threads(num_threads) private( \
+    localVec, currentPoint, pairPoint) shared(localSize, vec)
   {
     int tid = omp_get_thread_num();
     localVec.assign(vec.begin() + localSize * tid,
                     vec.begin() + localSize * (tid + 1));
     localVec = radixSort(localVec);
+    int u = 0;
+    for (int i =  localSize * tid;
+         i < localSize * (tid + 1); i++) {
+      vec[i] = localVec[u++];    
+    }
     int countPair = static_cast<int>(comps.size());
     std::vector<double> localVec1(localSize);
     for (int i = 0; i < countPair; i++) {
@@ -265,6 +274,7 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
         int j = 0;
         int tmp = localSize * tid + localSize;
         for (int k = localSize * tid; k < tmp; k++) {
+#pragma omp critical
           vec[k] = localVec1[j];
           j++;
         }
@@ -272,6 +282,25 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
     }
 #pragma omp barrier
   }
-  vec.assign(vec.begin() + addition, vec.end());
+  vec.assign(vec.begin(), vec.end() - addition);
+  comps.clear();
   return vec;
+}
+
+void time(std::vector<double> vec, int num_threads) { 
+    double startTimeParal;
+    double endTimeParal;
+    double startTimeSeq;
+    double endTimeSeq;
+    startTimeParal = omp_get_wtime();
+    radix_sort_batcher_omp(vec, num_threads);
+    endTimeParal = omp_get_wtime();
+    startTimeSeq = omp_get_wtime();
+    radixSort(vec);
+    endTimeSeq = omp_get_wtime();
+    double paralTime = endTimeParal - startTimeParal;
+    double seqTime = endTimeSeq - startTimeSeq;
+    std::cout << "time Paral = " << paralTime << std::endl;
+    std::cout << "time Seq = " << seqTime << std::endl;
+    std::cout << "time seq / time paral = " << seqTime / paralTime << std::endl;
 }

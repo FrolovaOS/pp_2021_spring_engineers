@@ -18,5 +18,6 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec,
 void makeNetwork(int size);
 void net(std::vector<int> vec);
 void oddEvenMerge(std::vector<int> left, std::vector<int> right);
+void time(std::vector<double> vec, int num_threads);
 
 #endif  // MODULES_TASK_2_FROLOVA_O_RADIX_SORT_BATCHER_MERGE_OMP_RADIX_SORT_BATCHER_MERGE_H_

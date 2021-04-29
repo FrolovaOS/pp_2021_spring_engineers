@@ -88,10 +88,22 @@ TEST(radix_sort, bigRadix) {
 TEST(batcher_merge, simple_merge) {
   std::vector<double> vect = std::vector<double>(
       {2.0, 9.0, 11.0, 7.0, 13.0, 4.0, 12.0, 8.0, 1.0, 15.0});
-  std::vector<double> sorted = radix_sort_batcher_omp(vect, 1);
+  std::vector<double> sorted = radix_sort_batcher_omp(vect, 3);
   std::vector<double> checked = checkVector(vect);
   ASSERT_EQ(sorted, checked);
 }
+
+TEST(batcher_merge, random) {
+  std::vector<double> vect = getRandomVector(20);
+  std::vector<double> sorted = radix_sort_batcher_omp(vect, 3);
+  std::vector<double> checked = checkVector(vect);
+  ASSERT_EQ(sorted, checked);
+}
+
+//TEST(batcher_merge, time) {
+  //std::vector<double> vect = getRandomVector(2000000);
+  //time(vect, 4);
+//}
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
