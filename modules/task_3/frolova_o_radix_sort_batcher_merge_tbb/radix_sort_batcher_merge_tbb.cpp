@@ -286,20 +286,3 @@ std::vector<double> radix_sort_batcher_omp(std::vector<double> vec, int num_thre
   return vec;
 }
 
-void time(std::vector<double> vec, int num_threads) {
-  tbb::tick_count startTimeParal;
-  tbb::tick_count endTimeParal;
-  tbb::tick_count startTimeSeq;
-  tbb::tick_count endTimeSeq;
-  startTimeParal = tbb::tick_count::now();
-  radix_sort_batcher_omp(vec, num_threads);
-  endTimeParal = tbb::tick_count::now();
-  startTimeSeq = tbb::tick_count::now();
-  radixSort(vec);
-  endTimeSeq = tbb::tick_count::now();
-  double paralTime = (endTimeParal - startTimeParal).seconds();
-  double seqTime = (endTimeSeq - startTimeSeq).seconds();
-  std::cout << "time Paral = " << paralTime << std::endl;
-  std::cout << "time Seq = " << seqTime << std::endl;
-  std::cout << "time seq / time paral = " << (seqTime / paralTime) << std::endl;
-}
